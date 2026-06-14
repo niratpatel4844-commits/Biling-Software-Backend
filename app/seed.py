@@ -12,21 +12,23 @@ from app.utils.auth import hash_password
 
 
 SYSTEM_ROLES = [
-    ("super_admin", "Super Admin", True),
-    ("admin", "Admin", True),
-    ("manager", "Manager", True),
-    ("warehouse_manager", "Warehouse Manager", True),
-    ("branch_manager", "Branch Manager", True),
-    ("franchise_manager", "Franchise Manager", True),
-    ("accountant", "Accountant", True),
-    ("sales_staff", "Sales Staff", True),
-    ("support_staff", "Support Staff", True),
+    # (name, display, is_system, allow_branch, allow_franchise, allow_warehouse)
+    ("super_admin", "Super Admin", True, False, False, False),
+    ("admin", "Admin", True, False, False, False),
+    ("manager", "Manager", True, True, False, False),
+    ("warehouse_manager", "Warehouse Manager", True, False, False, True),
+    ("branch_manager", "Branch Manager", True, True, False, False),
+    ("franchise_manager", "Franchise Manager", True, False, True, False),
+    ("accountant", "Accountant", True, True, False, False),
+    ("sales_staff", "Sales Staff", True, True, False, False),
+    ("support_staff", "Support Staff", True, False, False, False),
 ]
 
 MODULES = [
-    "dashboard", "products", "inventory", "sales", "purchases",
-    "reports", "finance", "users", "settings", "companies",
-    "branches", "franchises", "warehouses", "customers", "vendors",
+    "dashboard", "products", "categories", "brands", "units", "variants",
+    "inventory", "sales", "purchases", "reports", "finance", "users", 
+    "settings", "companies", "branches", "franchises", "warehouses", 
+    "customers", "vendors",
 ]
 
 ACTIONS = ["view", "create", "edit", "delete", "approve", "export", "import"]
@@ -35,10 +37,9 @@ ACTIONS = ["view", "create", "edit", "delete", "approve", "export", "import"]
 def seed_default_data():
     db = SessionLocal()
     try:
-        # Seed roles
-        for name, display, is_system in SYSTEM_ROLES:
+        for name, display, is_system, allow_branch, allow_franchise, allow_warehouse in SYSTEM_ROLES:
             if not db.query(Role).filter(Role.name == name).first():
-                db.add(Role(name=name, display_name=display, is_system=is_system))
+                db.add(Role(name=name, display_name=display, is_system=is_system, allow_company=True, allow_branch=allow_branch, allow_franchise=allow_franchise, allow_warehouse=allow_warehouse))
         db.commit()
 
         # Seed permissions

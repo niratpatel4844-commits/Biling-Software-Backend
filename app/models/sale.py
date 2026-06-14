@@ -8,10 +8,15 @@ class Sale(Base):
     __tablename__ = "sales"
 
     id = Column(Integer, primary_key=True, index=True)
+    document_type = Column(String(50), default="invoice") # quotation, sales_order, invoice, return, credit_note
     invoice_number = Column(String(50), unique=True, nullable=False)
+    reference_id = Column(Integer, ForeignKey("sales.id"), nullable=True) # To link order to invoice etc.
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)
     branch_id = Column(Integer, ForeignKey("branches.id"), nullable=True)
     franchise_id = Column(Integer, ForeignKey("franchises.id"), nullable=True)
+    warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=True)
+    sales_person_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     sale_date = Column(DateTime, server_default=func.now())
     subtotal = Column(Numeric(14, 2), default=0)
     discount_amount = Column(Numeric(12, 2), default=0)
@@ -42,6 +47,8 @@ class SaleItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     sale_id = Column(Integer, ForeignKey("sales.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    product_variant_id = Column(Integer, ForeignKey("product_variants.id"), nullable=True)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True)
     quantity = Column(Integer, nullable=False)
     unit_price = Column(Numeric(12, 2), nullable=False)
     discount_percent = Column(Numeric(5, 2), default=0)

@@ -38,8 +38,20 @@ def create_product(data: ProductCreate, user: User = Depends(require_permission(
     existing = db.query(Product).filter(Product.sku == data.sku).first()
     if existing:
         raise HTTPException(status_code=400, detail="SKU already exists")
-    product = Product(**data.model_dump())
+        
+    actual_category_id = data.child_category_id or data.sub_category_id or data.category_id
+    payload = data.model_dump(exclude={"sub_category_id", "child_category_id", "category_id"})
+    payload["category_id"] = actual_category_id
+    
+    product = Product(**payload)
     db.add(product)
+    db.flush() # flush to get product id
+    
+    # Automatically initialize inventory record as requested
+    from app.models.inventory import Inventory
+    initial_inventory = Inventory(product_id=product.id, quantity=0)
+    db.add(initial_inventory)
+    
     db.commit()
     db.refresh(product)
     return ProductResponse.model_validate(product)
@@ -58,8 +70,20 @@ def update_product(product_id: int, data: ProductUpdate, user: User = Depends(re
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    for key, val in data.model_dump(exclude_unset=True).items():
+        
+    payload = data.model_dump(exclude_unset=True)
+    
+    if "child_category_id" in payload or "sub_category_id" in payload or "category_id" in payload:
+        actual_category_id = payload.get("child_category_id") or payload.get("sub_category_id") or payload.get("category_id")
+        if actual_category_id:
+            payload["category_id"] = actual_category_id
+            
+    payload.pop("child_category_id", None)
+    payload.pop("sub_category_id", None)
+    
+    for key, val in payload.items():
         setattr(product, key, val)
+        
     db.commit()
     db.refresh(product)
     return ProductResponse.model_validate(product)
@@ -75,29 +99,4 @@ def delete_product(product_id: int, user: User = Depends(require_permission("pro
     return MessageResponse(message="Product deleted")
 
 
-# --- Categories ---
-cat_router = APIRouter(prefix="/api/categories", tags=["Category Management"])
 
-
-@cat_router.get("/", response_model=list[CategoryResponse])
-def list_categories(user: User = Depends(require_permission("products", "view")), db: Session = Depends(get_db)):
-    return [CategoryResponse.model_validate(c) for c in db.query(Category).all()]
-
-
-@cat_router.post("/", response_model=CategoryResponse)
-def create_category(data: CategoryCreate, user: User = Depends(require_permission("products", "create")), db: Session = Depends(get_db)):
-    cat = Category(**data.model_dump())
-    db.add(cat)
-    db.commit()
-    db.refresh(cat)
-    return CategoryResponse.model_validate(cat)
-
-
-@cat_router.delete("/{cat_id}", response_model=MessageResponse)
-def delete_category(cat_id: int, user: User = Depends(require_permission("products", "delete")), db: Session = Depends(get_db)):
-    cat = db.query(Category).filter(Category.id == cat_id).first()
-    if not cat:
-        raise HTTPException(status_code=404, detail="Category not found")
-    db.delete(cat)
-    db.commit()
-    return MessageResponse(message="Category deleted")

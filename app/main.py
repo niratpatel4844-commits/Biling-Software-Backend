@@ -38,10 +38,18 @@ app.include_router(branches.router)
 app.include_router(franchises.router)
 app.include_router(warehouses.router)
 app.include_router(products.router)
-app.include_router(products.cat_router)
+from app.routers import brands, units, product_variants, categories
+app.include_router(categories.router)
+app.include_router(brands.router)
+app.include_router(units.router)
+app.include_router(product_variants.router)
 app.include_router(customers.router)
 app.include_router(customers.vendor_router)
 app.include_router(audit_logs.router)
+from app.routers import inventory, sales, purchases
+app.include_router(inventory.router)
+app.include_router(sales.router)
+app.include_router(purchases.router)
 
 
 @app.get("/")

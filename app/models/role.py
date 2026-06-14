@@ -21,6 +21,10 @@ class Role(Base):
     description = Column(Text, nullable=True)
     is_system = Column(Boolean, default=False)  # System roles can't be deleted
     is_active = Column(Boolean, default=True)
+    allow_company = Column(Boolean, default=True)
+    allow_branch = Column(Boolean, default=False)
+    allow_franchise = Column(Boolean, default=False)
+    allow_warehouse = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

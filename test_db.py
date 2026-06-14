@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv(override=True)
 url = os.getenv("DATABASE_URL")
 print(f"🔗 Connecting to: {url}")
 

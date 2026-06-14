@@ -17,3 +17,6 @@ from .sale import Sale
 from .invoice import Invoice
 from .notification import Notification
 from .setting import Setting
+from .brand import Brand
+from .unit import Unit
+from .product_variant import ProductVariant

@@ -8,14 +8,19 @@ class Purchase(Base):
     __tablename__ = "purchases"
 
     id = Column(Integer, primary_key=True, index=True)
+    document_type = Column(String(50), default="purchase_bill") # purchase_request, purchase_order, goods_receipt, purchase_bill, vendor_return
     po_number = Column(String(50), unique=True, nullable=False)
+    reference_id = Column(Integer, ForeignKey("purchases.id"), nullable=True)
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)
     warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=True)
     branch_id = Column(Integer, ForeignKey("branches.id"), nullable=True)
+    purchase_date = Column(DateTime, server_default=func.now())
     order_date = Column(DateTime, server_default=func.now())
     expected_date = Column(DateTime, nullable=True)
     received_date = Column(DateTime, nullable=True)
     subtotal = Column(Numeric(14, 2), default=0)
+    discount_amount = Column(Numeric(12, 2), default=0)
     tax_amount = Column(Numeric(12, 2), default=0)
     total_amount = Column(Numeric(14, 2), default=0)
     paid_amount = Column(Numeric(14, 2), default=0)
@@ -36,6 +41,8 @@ class PurchaseItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     purchase_id = Column(Integer, ForeignKey("purchases.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    product_variant_id = Column(Integer, ForeignKey("product_variants.id"), nullable=True)
+    unit_id = Column(Integer, ForeignKey("units.id"), nullable=True)
     quantity = Column(Integer, nullable=False)
     received_quantity = Column(Integer, default=0)
     unit_price = Column(Numeric(12, 2), nullable=False)

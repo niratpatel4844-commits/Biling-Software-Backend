@@ -25,7 +25,7 @@ def create_role(data: RoleCreate, user: User = Depends(require_superadmin), db: 
     existing = db.query(Role).filter(Role.name == data.name).first()
     if existing:
         raise HTTPException(status_code=400, detail="Role already exists")
-    role = Role(name=data.name, display_name=data.display_name, description=data.description)
+    role = Role(**data.model_dump())
     db.add(role)
     db.commit()
     db.refresh(role)
@@ -38,8 +38,6 @@ def update_role(role_id: int, data: RoleUpdate, user: User = Depends(require_sup
     role = db.query(Role).filter(Role.id == role_id).first()
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")
-    if role.is_system:
-        raise HTTPException(status_code=400, detail="Cannot modify system role")
     for key, val in data.model_dump(exclude_unset=True).items():
         setattr(role, key, val)
     db.commit()

@@ -10,6 +10,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     slug = Column(String(255), unique=True, nullable=False)
+    category_code = Column(String(100), nullable=True)
     description = Column(Text, nullable=True)
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     image = Column(Text, nullable=True)

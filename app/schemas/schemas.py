@@ -75,11 +75,19 @@ class RoleCreate(BaseModel):
     name: str
     display_name: str
     description: Optional[str] = None
+    allow_company: Optional[bool] = True
+    allow_branch: Optional[bool] = False
+    allow_franchise: Optional[bool] = False
+    allow_warehouse: Optional[bool] = False
 
 class RoleUpdate(BaseModel):
     display_name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
+    allow_company: Optional[bool] = None
+    allow_branch: Optional[bool] = None
+    allow_franchise: Optional[bool] = None
+    allow_warehouse: Optional[bool] = None
 
 class RoleResponse(BaseModel):
     id: int
@@ -88,6 +96,10 @@ class RoleResponse(BaseModel):
     description: Optional[str] = None
     is_system: bool
     is_active: bool
+    allow_company: bool
+    allow_branch: bool
+    allow_franchise: bool
+    allow_warehouse: bool
     created_at: Optional[datetime] = None
 
     class Config:
@@ -297,17 +309,27 @@ class WarehouseCreate(BaseModel):
     name: str
     code: str
     company_id: int
+    branch_id: Optional[int] = None
+    manager_id: Optional[int] = None
+    email: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
+    pincode: Optional[str] = None
     phone: Optional[str] = None
     capacity: Optional[str] = None
 
 class WarehouseUpdate(BaseModel):
     name: Optional[str] = None
+    branch_id: Optional[int] = None
+    manager_id: Optional[int] = None
+    email: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
+    state: Optional[str] = None
+    pincode: Optional[str] = None
     phone: Optional[str] = None
+    capacity: Optional[str] = None
     is_active: Optional[bool] = None
 
 class WarehouseResponse(BaseModel):
@@ -315,9 +337,15 @@ class WarehouseResponse(BaseModel):
     name: str
     code: str
     company_id: int
+    branch_id: Optional[int] = None
+    manager_id: Optional[int] = None
+    email: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
+    state: Optional[str] = None
+    pincode: Optional[str] = None
     phone: Optional[str] = None
+    capacity: Optional[str] = None
     is_active: bool
     created_at: Optional[datetime] = None
 
@@ -331,25 +359,39 @@ class ProductCreate(BaseModel):
     name: str
     description: Optional[str] = None
     category_id: Optional[int] = None
-    brand: Optional[str] = None
-    unit: Optional[str] = "PCS"
+    sub_category_id: Optional[int] = None
+    child_category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    unit_id: Optional[int] = None
     gst_percent: Optional[float] = 18
     hsn_code: Optional[str] = None
     cost_price: float
     selling_price: float
     mrp: Optional[float] = None
     min_stock: Optional[int] = 10
+    reorder_level: Optional[int] = 20
+    barcode: Optional[str] = None
+    image: Optional[str] = None
+    is_active: Optional[bool] = True
     company_id: Optional[int] = None
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     category_id: Optional[int] = None
-    brand: Optional[str] = None
+    sub_category_id: Optional[int] = None
+    child_category_id: Optional[int] = None
+    brand_id: Optional[int] = None
+    unit_id: Optional[int] = None
     gst_percent: Optional[float] = None
+    hsn_code: Optional[str] = None
     cost_price: Optional[float] = None
     selling_price: Optional[float] = None
     mrp: Optional[float] = None
+    min_stock: Optional[int] = None
+    reorder_level: Optional[int] = None
+    barcode: Optional[str] = None
+    image: Optional[str] = None
     is_active: Optional[bool] = None
 
 class ProductResponse(BaseModel):
@@ -358,12 +400,109 @@ class ProductResponse(BaseModel):
     name: str
     description: Optional[str] = None
     category_id: Optional[int] = None
-    brand: Optional[str] = None
-    unit: Optional[str] = None
+    brand_id: Optional[int] = None
+    unit_id: Optional[int] = None
     gst_percent: Optional[float] = None
+    hsn_code: Optional[str] = None
     cost_price: Optional[float] = None
     selling_price: Optional[float] = None
     mrp: Optional[float] = None
+    min_stock: Optional[int] = None
+    reorder_level: Optional[int] = None
+    barcode: Optional[str] = None
+    image: Optional[str] = None
+    is_active: bool
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# --- Brand ---
+class BrandCreate(BaseModel):
+    name: str
+    brand_code: Optional[str] = None
+    description: Optional[str] = None
+    logo: Optional[str] = None
+    is_active: Optional[bool] = True
+
+class BrandUpdate(BaseModel):
+    name: Optional[str] = None
+    brand_code: Optional[str] = None
+    description: Optional[str] = None
+    logo: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class BrandResponse(BaseModel):
+    id: int
+    name: str
+    brand_code: Optional[str] = None
+    description: Optional[str] = None
+    logo: Optional[str] = None
+    is_active: bool
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# --- Unit ---
+class UnitCreate(BaseModel):
+    name: str
+    code: str
+    description: Optional[str] = None
+    is_active: Optional[bool] = True
+
+class UnitUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class UnitResponse(BaseModel):
+    id: int
+    name: str
+    code: str
+    description: Optional[str] = None
+    is_active: bool
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+# --- Product Variant ---
+class ProductVariantCreate(BaseModel):
+    product_id: int
+    name: str
+    sku: str
+    color: Optional[str] = None
+    size: Optional[str] = None
+    weight: Optional[str] = None
+    cost_price: Optional[float] = None
+    selling_price: Optional[float] = None
+    barcode: Optional[str] = None
+    is_active: Optional[bool] = True
+
+class ProductVariantUpdate(BaseModel):
+    name: Optional[str] = None
+    sku: Optional[str] = None
+    color: Optional[str] = None
+    size: Optional[str] = None
+    weight: Optional[str] = None
+    cost_price: Optional[float] = None
+    selling_price: Optional[float] = None
+    barcode: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class ProductVariantResponse(BaseModel):
+    id: int
+    product_id: int
+    name: str
+    sku: str
+    color: Optional[str] = None
+    size: Optional[str] = None
+    weight: Optional[str] = None
+    cost_price: Optional[float] = None
+    selling_price: Optional[float] = None
+    barcode: Optional[str] = None
     is_active: bool
     created_at: Optional[datetime] = None
 
@@ -374,18 +513,34 @@ class ProductResponse(BaseModel):
 # --- Category ---
 class CategoryCreate(BaseModel):
     name: str
-    slug: str
+    slug: Optional[str] = None
+    category_code: Optional[str] = None
     description: Optional[str] = None
     parent_id: Optional[int] = None
+    main_category_id: Optional[int] = None
     level: Optional[int] = 0
+    is_active: Optional[bool] = True
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    category_code: Optional[str] = None
+    description: Optional[str] = None
+    parent_id: Optional[int] = None
+    main_category_id: Optional[int] = None
+    level: Optional[int] = None
+    is_active: Optional[bool] = None
 
 class CategoryResponse(BaseModel):
     id: int
     name: str
     slug: str
+    category_code: Optional[str] = None
+    description: Optional[str] = None
     parent_id: Optional[int] = None
     level: int
     is_active: bool
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -393,23 +548,39 @@ class CategoryResponse(BaseModel):
 
 # --- Customer ---
 class CustomerCreate(BaseModel):
+    customer_code: Optional[str] = None
     name: str
+    contact_person: Optional[str] = None
     email: Optional[str] = None
     mobile: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
+    country: Optional[str] = "India"
+    pincode: Optional[str] = None
     gst_number: Optional[str] = None
+    pan_number: Optional[str] = None
     credit_limit: Optional[float] = 0
     company_id: Optional[int] = None
+    notes: Optional[str] = None
 
 class CustomerResponse(BaseModel):
     id: int
+    customer_code: Optional[str] = None
     name: str
+    contact_person: Optional[str] = None
     email: Optional[str] = None
     mobile: Optional[str] = None
+    address: Optional[str] = None
     city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    pincode: Optional[str] = None
+    gst_number: Optional[str] = None
+    pan_number: Optional[str] = None
+    credit_limit: Optional[float] = None
     outstanding_amount: Optional[float] = None
+    notes: Optional[str] = None
     is_active: bool
     created_at: Optional[datetime] = None
 
@@ -419,19 +590,39 @@ class CustomerResponse(BaseModel):
 
 # --- Vendor ---
 class VendorCreate(BaseModel):
+    vendor_code: Optional[str] = None
     name: str
+    contact_person: Optional[str] = None
     email: Optional[str] = None
     mobile: Optional[str] = None
     address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = "India"
+    pincode: Optional[str] = None
     gst_number: Optional[str] = None
+    pan_number: Optional[str] = None
+    payment_terms: Optional[str] = None
     company_id: Optional[int] = None
+    notes: Optional[str] = None
 
 class VendorResponse(BaseModel):
     id: int
+    vendor_code: Optional[str] = None
     name: str
+    contact_person: Optional[str] = None
     email: Optional[str] = None
     mobile: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    pincode: Optional[str] = None
+    gst_number: Optional[str] = None
+    pan_number: Optional[str] = None
+    payment_terms: Optional[str] = None
     outstanding_amount: Optional[float] = None
+    notes: Optional[str] = None
     is_active: bool
     created_at: Optional[datetime] = None
 
@@ -469,6 +660,27 @@ class NotificationResponse(BaseModel):
         from_attributes = True
 
 
+# --- Inventory ---
+class InventoryResponse(BaseModel):
+    id: int
+    product_id: int
+    branch_id: Optional[int] = None
+    warehouse_id: Optional[int] = None
+    quantity: int
+    reserved_quantity: int
+    damaged_quantity: int
+    batch_number: Optional[str] = None
+    location: Optional[str] = None
+    last_restocked: Optional[datetime] = None
+    
+    # Nested fields for frontend display
+    product_name: Optional[str] = None
+    product_sku: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
 # --- Generic ---
 class PaginatedResponse(BaseModel):
     items: list
@@ -480,3 +692,45 @@ class PaginatedResponse(BaseModel):
 class MessageResponse(BaseModel):
     message: str
     success: bool = True
+
+# --- Sales & Purchases ---
+class SaleItemCreate(BaseModel):
+    product_id: int
+    product_variant_id: Optional[int] = None
+    unit_id: Optional[int] = None
+    quantity: int
+    unit_price: float
+    discount_percent: Optional[float] = 0
+    gst_percent: Optional[float] = 0
+
+class SaleCreate(BaseModel):
+    customer_id: int
+    company_id: Optional[int] = None
+    document_type: str = "invoice"
+    branch_id: Optional[int] = None
+    franchise_id: Optional[int] = None
+    warehouse_id: Optional[int] = None
+    sales_person_id: Optional[int] = None
+    payment_method: str = "cash"
+    payment_status: str = "paid"
+    notes: Optional[str] = None
+    items: list[SaleItemCreate]
+
+class PurchaseItemCreate(BaseModel):
+    product_id: int
+    product_variant_id: Optional[int] = None
+    unit_id: Optional[int] = None
+    quantity: int
+    unit_price: float
+    gst_percent: Optional[float] = 0
+
+class PurchaseCreate(BaseModel):
+    vendor_id: int
+    company_id: Optional[int] = None
+    document_type: str = "purchase_bill"
+    warehouse_id: Optional[int] = None
+    branch_id: Optional[int] = None
+    discount_amount: Optional[float] = 0
+    payment_status: str = "unpaid"
+    notes: Optional[str] = None
+    items: list[PurchaseItemCreate]
