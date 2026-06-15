@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/brands", tags=["Brand Management"])
 @router.get("/", response_model=PaginatedResponse)
 def list_brands(
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=10000),
     search: str = "",
     user: User = Depends(require_permission("brands", "view")),
     db: Session = Depends(get_db)

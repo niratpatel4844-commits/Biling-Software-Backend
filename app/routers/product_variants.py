@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/variants", tags=["Product Variant Management"])
 def list_variants(
     product_id: int = None,
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=10000),
     search: str = "",
     user: User = Depends(require_permission("variants", "view")),
     db: Session = Depends(get_db)

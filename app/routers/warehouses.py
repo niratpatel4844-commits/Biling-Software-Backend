@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/warehouses", tags=["Warehouse Management"])
 
 @router.get("/", response_model=dict)
 def list_warehouses(
-    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100),
+    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=10000),
     search: str = Query(""),
     user: User = Depends(require_permission("warehouses", "view")),
     db: Session = Depends(get_db)

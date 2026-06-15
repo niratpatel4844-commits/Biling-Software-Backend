@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/companies", tags=["Company Management"])
 
 @router.get("/", response_model=dict)
 def list_companies(
-    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100),
+    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=10000),
     search: str = Query(""),
     user: User = Depends(require_permission("companies", "view")),
     db: Session = Depends(get_db)

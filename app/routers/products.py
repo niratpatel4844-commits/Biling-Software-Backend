@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/products", tags=["Product Management"])
 
 @router.get("/", response_model=dict)
 def list_products(
-    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100),
+    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=10000),
     search: str = Query(""), category_id: int = Query(None),
     user: User = Depends(require_permission("products", "view")),
     db: Session = Depends(get_db)
@@ -26,6 +26,7 @@ def list_products(
         q = q.filter(Product.name.ilike(f"%{search}%") | Product.sku.ilike(f"%{search}%"))
     if category_id:
         q = q.filter(Product.category_id == category_id)
+    q = q.order_by(Product.id.desc())
     total = q.count()
     items = q.offset((page - 1) * page_size).limit(page_size).all()
     return {"items": [ProductResponse.model_validate(p) for p in items],

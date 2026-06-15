@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/branches", tags=["Branch Management"])
 
 @router.get("/", response_model=dict)
 def list_branches(
-    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100),
+    page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=10000),
     search: str = Query(""), company_id: int = Query(None),
     user: User = Depends(require_permission("branches", "view")),
     db: Session = Depends(get_db)

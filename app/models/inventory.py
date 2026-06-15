@@ -44,3 +44,22 @@ class StockMovement(Base):
     notes = Column(Text, nullable=True)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
+
+
+class StockHistory(Base):
+    __tablename__ = "stock_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    warehouse_id = Column(Integer, ForeignKey("warehouses.id"), nullable=True)
+    branch_id = Column(Integer, ForeignKey("branches.id"), nullable=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)
+    transaction_type = Column(String(50), nullable=False)  # OPENING_STOCK, PURCHASE, SALES, etc.
+    previous_stock = Column(Integer, default=0)
+    quantity_in = Column(Integer, default=0)
+    quantity_out = Column(Integer, default=0)
+    new_stock = Column(Integer, default=0)
+    reference_id = Column(String(100), nullable=True)
+    remarks = Column(Text, nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())

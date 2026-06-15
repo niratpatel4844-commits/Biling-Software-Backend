@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/users", tags=["User Management"])
 @router.get("/", response_model=dict)
 def list_users(
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=10000),
     search: str = Query("", max_length=100),
     role_id: int = Query(None),
     is_active: bool = Query(None),

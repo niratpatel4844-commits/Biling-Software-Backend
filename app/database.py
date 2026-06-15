@@ -20,6 +20,7 @@ def init_db():
     from app.models import (
         user, role, permission, company, branch, franchise,
         warehouse, product, category, inventory, sale, purchase,
-        customer, vendor, invoice, audit_log, notification, setting
+        customer, vendor, invoice, audit_log, notification, setting,
+        delivery_challan, customer_payment
     )
     Base.metadata.create_all(bind=engine)

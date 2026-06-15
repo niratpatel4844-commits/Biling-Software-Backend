@@ -19,6 +19,7 @@ class Purchase(Base):
     order_date = Column(DateTime, server_default=func.now())
     expected_date = Column(DateTime, nullable=True)
     received_date = Column(DateTime, nullable=True)
+    priority = Column(String(20), default="Medium") # Low, Medium, High, Urgent
     subtotal = Column(Numeric(14, 2), default=0)
     discount_amount = Column(Numeric(12, 2), default=0)
     tax_amount = Column(Numeric(12, 2), default=0)
@@ -45,6 +46,8 @@ class PurchaseItem(Base):
     unit_id = Column(Integer, ForeignKey("units.id"), nullable=True)
     quantity = Column(Integer, nullable=False)
     received_quantity = Column(Integer, default=0)
+    damaged_quantity = Column(Integer, default=0)
+    return_reason = Column(String(100), nullable=True) # Damaged, Wrong Product, Expired, Quality Issue, Other
     unit_price = Column(Numeric(12, 2), nullable=False)
     gst_percent = Column(Numeric(5, 2), default=0)
     total = Column(Numeric(14, 2), nullable=False)

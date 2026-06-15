@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/categories", tags=["Category Management"])
 @router.get("/", response_model=PaginatedResponse)
 def list_categories(
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=10000),
     search: str = "",
     parent_id: int = Query(None),
     level: int = Query(None),
