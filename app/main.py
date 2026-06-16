@@ -46,10 +46,14 @@ app.include_router(product_variants.router)
 app.include_router(customers.router)
 app.include_router(customers.vendor_router)
 app.include_router(audit_logs.router)
-from app.routers import inventory, sales, purchases
+from app.routers import inventory, sales, purchases, reports, finance, settings, notifications
 app.include_router(inventory.router)
 app.include_router(sales.router)
 app.include_router(purchases.router)
+app.include_router(reports.router)
+app.include_router(finance.router)
+app.include_router(settings.router)
+app.include_router(notifications.router)
 
 
 @app.get("/")

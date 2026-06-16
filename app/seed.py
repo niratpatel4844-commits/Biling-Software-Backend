@@ -8,6 +8,7 @@ from app.models.branch import Branch
 from app.models.franchise import Franchise
 from app.models.warehouse import Warehouse
 from app.models.audit_log import AuditLog
+from app.models.finance import AccountGroup, Account, AccountType
 from app.utils.auth import hash_password
 
 
@@ -32,8 +33,52 @@ MODULES = [
 ]
 
 ACTIONS = ["view", "create", "edit", "delete", "approve", "export", "import"]
+ACTIONS = ["view", "create", "edit", "delete", "approve", "export", "import"]
 
+def seed_finance(db):
+    groups = [
+        ("Current Assets", AccountType.ASSET),
+        ("Fixed Assets", AccountType.ASSET),
+        ("Current Liabilities", AccountType.LIABILITY),
+        ("Long Term Liabilities", AccountType.LIABILITY),
+        ("Equity", AccountType.EQUITY),
+        ("Revenue", AccountType.REVENUE),
+        ("Cost of Goods Sold", AccountType.EXPENSE),
+        ("Operating Expenses", AccountType.EXPENSE),
+    ]
+    
+    group_map = {}
+    for name, atype in groups:
+        g = db.query(AccountGroup).filter(AccountGroup.name == name).first()
+        if not g:
+            g = AccountGroup(name=name, type=atype)
+            db.add(g)
+            db.flush()
+        group_map[name] = g
+        
+    db.commit()
 
+    accounts = [
+        ("1000", "Cash", "Current Assets"),
+        ("1010", "Bank Account", "Current Assets"),
+        ("1200", "Accounts Receivable", "Current Assets"),
+        ("1300", "Inventory", "Current Assets"),
+        ("2000", "Accounts Payable", "Current Liabilities"),
+        ("3000", "Owner's Equity", "Equity"),
+        ("4000", "Sales Revenue", "Revenue"),
+        ("5000", "Cost of Goods Sold", "Cost of Goods Sold"),
+        ("6000", "Rent Expense", "Operating Expenses"),
+        ("6010", "Salary Expense", "Operating Expenses"),
+        ("6020", "Utilities Expense", "Operating Expenses"),
+    ]
+    
+    for code, name, group_name in accounts:
+        a = db.query(Account).filter(Account.code == code).first()
+        if not a:
+            a = Account(code=code, name=name, group_id=group_map[group_name].id)
+            db.add(a)
+            
+    db.commit()
 def seed_default_data():
     db = SessionLocal()
     try:
@@ -61,6 +106,7 @@ def seed_default_data():
             db.commit()
 
         # Seed super admin user
+        seed_finance(db)
         if not db.query(User).filter(User.email == "admin@erp.com").first():
             sa_role = db.query(Role).filter(Role.name == "super_admin").first()
             admin = User(
